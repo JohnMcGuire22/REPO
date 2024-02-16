@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define _CRT_SECURE_NO_WARNINGS
+#pragma warning(disable:6031)
+#pragma warning(disable:4996)
 
 typedef struct node {
 	char letter;
@@ -9,15 +12,15 @@ typedef struct node {
 // Returns number of nodes in the linkedList.
 int length(node* head)
 {
-   struct node *tmp = head;
-    int len = 0;
-   while (tmp != NULL)
-   {
-      tmp = tmp->next;
-      len++;
-   }
-
-   return (len);
+	int count = 0;
+	if (head != NULL) {
+		count++;
+		while (head->next != NULL) {
+			count++;
+			head = head->next;
+		}
+	}
+	return count;
 }
 
 // parses the string in the linkedList
@@ -25,6 +28,18 @@ int length(node* head)
 //  then toCString function wil return "abc"
 char* toCString(node* head)
 {
+	int n = length(head);
+	int i = 0;
+	char* str = (char*)malloc((n+1) * sizeof(char));
+	node* temp = head;
+	if (temp != NULL) {
+		for (i = 0; i < n; i++) {
+			str[i] = temp->letter;
+			temp = temp->next;
+		}
+		str[n] = '\0';
+	}
+	return str;
 }
 
 // inserts character to the linkedlist
@@ -33,11 +48,28 @@ char* toCString(node* head)
 // head -> |a|->|b|->|c|->|x|
 void insertChar(node** pHead, char c)
 {
+	node* temp = (node*)malloc(sizeof(node));
+	temp->letter = c;
+	temp->next = NULL;
+	if (*pHead == NULL) {
+		*pHead = temp;
+	}
+	else {
+		node* tmp = *pHead;
+		while (tmp->next != NULL) {
+			tmp = tmp->next;
+		}
+		tmp->next = temp;
+	}
 }
 
 // deletes all nodes in the linkedList.
 void deleteList(node** pHead)
 {
+	while (*pHead != NULL) {
+		node* temp = *pHead;
+		*pHead = (*pHead)->next;
+	}
 }
 
 int main(void)
@@ -46,16 +78,16 @@ int main(void)
 	node* head = NULL;
 	char* str;
 	char c;
-	FILE* inFile = fopen("input.txt","r");
+	FILE* inFile = fopen("input.txt", "r");
 
 	fscanf(inFile, " %d\n", &numInputs);
-	
+
 	while (numInputs-- > 0)
 	{
 		fscanf(inFile, " %d\n", &strLen);
 		for (i = 0; i < strLen; i++)
 		{
-			fscanf(inFile," %c", &c);
+			fscanf(inFile, " %c", &c);
 			insertChar(&head, c);
 		}
 
